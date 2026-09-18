@@ -1,0 +1,6 @@
+{
+  "name": "Nhà Mình - Đồ Decor Tái Chế",
+  "description": "Cửa hàng đồ decor bền vững và cẩm nang tái chế thủ công từ bìa carton và giấy vụn.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
