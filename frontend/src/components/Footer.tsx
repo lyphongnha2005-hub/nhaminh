@@ -67,12 +67,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
           {/* Atelier Contact */}
           <div className="footer-col">
-            <h4>Xưởng Thủ Công</h4>
+            <h4>Cơ sở</h4>
             <div className="footer-links" style={{ color: '#9c9288', fontSize: '0.85rem', lineHeight: '1.6' }}>
-              <div>📍 <strong>Xưởng & Trưng Bày:</strong> 600 Nguyễn Văn Cừ, thành phố Cần Thơ</div>
-              <div>🕒 <strong>Giờ Mở Cửa:</strong> 08:30 - 18:30 (Thứ 2 - Chủ Nhật)</div>
-              <div>📞 <strong>Hotline / Zalo:</strong> 08 3769 4079</div>
-              <div>✉️ <strong>Email:</strong></div>
+              <div><strong>Xưởng & Trưng Bày:</strong> 600 Nguyễn Văn Cừ, thành phố Cần Thơ</div>
+              <div><strong>Giờ Mở Cửa:</strong> 08:30 - 18:30 (Thứ 2 - Chủ Nhật)</div>
+              <div><strong>Hotline / Zalo:</strong> 08 3769 4079</div>
+              <div><strong>Email:</strong></div>
+              <div><strong>Fanpage:</strong> Nhà Mình</div>
             </div>
           </div>
         </div>
