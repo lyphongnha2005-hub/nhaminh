@@ -27,7 +27,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 <span className="material-symbols-outlined">recycling</span>
               </div>
               <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#fff', fontFamily: 'var(--font-serif)' }}>
-                Nhà Mình Atelier
+                Nhà Mình
               </h2>
             </div>
             <p>

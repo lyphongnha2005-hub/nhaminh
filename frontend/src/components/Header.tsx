@@ -62,12 +62,12 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>eco</span>
             Sống Xanh Bền Vững
           </span>
-          <span>Mỗi sản phẩm tại Nhà Mình giúp tái sinh trung bình 3.2kg bìa carton phế liệu</span>
+          <span>Mỗi sản phẩm tại Nhà Mình giúp tái sinh trung bình 2kg bìa carton phế liệu</span>
         </div>
         <div className="top-announcement-right">
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
             <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>storefront</span>
-            Xưởng: 600 Nguyễn Văn Cừ, thành phố Cần Thơ
+            600 Nguyễn Văn Cừ, thành phố Cần Thơ
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
             <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>call</span>
@@ -80,18 +80,16 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="container">
         <div className="header-main">
           {/* Brand Logo */}
-          <div 
-            className="brand-logo" 
+          <div
+            className="brand-logo"
             id="header-brand-logo"
             onClick={() => onNavigate('catalog')}
             style={{ cursor: 'pointer' }}
           >
-            <div className="brand-icon-box">
-              <span className="material-symbols-outlined" style={{ fontSize: '1.75rem' }}>recycling</span>
-            </div>
+            <img className="brand-emblem" src="/logo-emblem.png" alt="" />
             <div className="brand-text">
               <h1>Nhà Mình</h1>
-              <span>Tái Sinh Từ Phế Liệu</span>
+              <span>Paper Upcycling &amp; Decor</span>
             </div>
           </div>
 
@@ -107,8 +105,8 @@ export const Header: React.FC<HeaderProps> = ({
               id="global-search-input"
             />
             {searchQuery && (
-              <button 
-                className="search-clear-btn" 
+              <button
+                className="search-clear-btn"
                 onClick={() => onSearchChange('')}
                 title="Xóa tìm kiếm"
               >
@@ -119,8 +117,8 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Header Action Buttons */}
           <div className="header-actions" ref={accountMenuRef}>
-            <button 
-              className="icon-btn" 
+            <button
+              className="icon-btn"
               id="header-wishlist-action-btn"
               onClick={onOpenWishlist}
               title="Danh sách yêu thích"
@@ -132,8 +130,8 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </button>
 
-            <button 
-              className="icon-btn cart-header-btn" 
+            <button
+              className="icon-btn cart-header-btn"
               id="header-cart-action-btn"
               onClick={() => onNavigate('cart')}
               title="Xem giỏ hàng"
@@ -196,23 +194,12 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             <button
-              className={`nav-link ${currentScreen === 'cart' ? 'active' : ''}`}
-              onClick={() => onNavigate('cart')}
-              id="nav-link-cart"
+              className={`nav-link ${currentScreen === 'message' ? 'active' : ''}`}
+              onClick={() => onNavigate('message')}
+              id="nav-link-message"
             >
-              <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>shopping_cart</span>
-              Giỏ Hàng Của Bạn
-              {cartCount > 0 && (
-                <span style={{ 
-                  background: 'var(--color-primary)', 
-                  color: '#fff', 
-                  fontSize: '0.7rem', 
-                  padding: '0.1rem 0.45rem', 
-                  borderRadius: '10px' 
-                }}>
-                  {cartCount}
-                </span>
-              )}
+              <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>edit_note</span>
+              Thông điệp
             </button>
           </nav>
 

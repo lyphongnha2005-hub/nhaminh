@@ -12,6 +12,7 @@ import { WishlistModal } from './components/WishlistModal';
 import { WorkshopModal } from './components/WorkshopModal';
 import { LoginPage } from './components/LoginPage';
 import { RegisterPage } from './components/RegisterPage';
+import { MessagePage } from './components/MessagePage';
 import { Toast, ToastMessage } from './components/Toast';
 import { getStoredAccount, isLoggedIn, logoutAccount } from './services/authService';
 
@@ -275,6 +276,8 @@ export default function App() {
             onNavigate={handleNavigate}
           />
         )}
+
+        {currentScreen === 'message' && <MessagePage />}
 
         {currentScreen === 'checkout' && (
           <CheckoutPage

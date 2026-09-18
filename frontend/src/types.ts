@@ -1,4 +1,4 @@
-export type ScreenType = 'catalog' | 'detail' | 'cart' | 'checkout' | 'diy' | 'about' | 'login' | 'register';
+export type ScreenType = 'catalog' | 'detail' | 'cart' | 'checkout' | 'diy' | 'message' | 'about' | 'login' | 'register';
 
 export interface ProductVariant {
   id: string;
