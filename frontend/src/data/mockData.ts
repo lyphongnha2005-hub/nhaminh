@@ -12,7 +12,6 @@ export const SPACE_FILTERS = [
   'Phòng khách',
   'Góc làm việc',
   'Phòng ngủ',
-  'Quán Cafe & Studio',
   'Bàn ăn ấm cúng',
 ];
 
@@ -27,7 +26,7 @@ export const CRAFT_STANDARDS = [
 export const PRODUCTS: Product[] = [
   {
     id: 'tranh-3d-ca-koi-mixed-media',
-    name: 'Cá Koi Hồi Sinh - Tranh 3D Mixed Media',
+    name: 'Cá Koi',
     category: 'tranh-3d',
     roomSpace: 'Phòng khách',
     price: 1850000,
@@ -50,7 +49,7 @@ export const PRODUCTS: Product[] = [
       'Tránh ánh nắng trực tiếp trong thời gian dài để giữ màu và độ bền của vật liệu.',
       'Khi di chuyển, giữ phần khung và đỡ từ phía sau, không cầm vào các chi tiết nổi.',
     ],
-    images: ['/product-koi-3d.jpg'],
+    images: ['/product-koi-3d.png'],
     sizes: [
       { id: 'standard', label: 'Bản tiêu chuẩn theo mẫu', dimensions: 'Kích thước theo tác phẩm mẫu', price: 1850000 },
     ],
