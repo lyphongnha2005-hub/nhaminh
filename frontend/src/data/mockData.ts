@@ -124,7 +124,7 @@ Qua bàn tay của người thợ thủ công tại Nhà Mình Atelier, từng p
     name: 'Kệ Để Bàn 3 Tầng Khối Mô-Đun Carton',
     category: 'ke-hop',
     roomSpace: 'Góc làm việc',
-    price: 185000,
+    price: 18500,
     originalPrice: 220000,
     rating: 4.8,
     reviewCount: 96,
