@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { ScreenType } from '../types';
-import { FORMAT_CURRENCY } from '../data/mockData';
 
 interface HeaderProps {
   currentScreen: ScreenType;
@@ -21,7 +20,6 @@ export const Header: React.FC<HeaderProps> = ({
   currentScreen,
   onNavigate,
   cartCount,
-  cartTotal,
   wishlistCount,
   onOpenWishlist,
   isLoggedIn,
@@ -31,28 +29,6 @@ export const Header: React.FC<HeaderProps> = ({
   searchQuery,
   onSearchChange,
 }) => {
-  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
-  const accountMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (accountMenuRef.current && !accountMenuRef.current.contains(event.target as Node)) {
-        setIsAccountMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, []);
-
-  const handleAccountClick = () => {
-    if (isLoggedIn) {
-      setIsAccountMenuOpen((isOpen) => !isOpen);
-      return;
-    }
-    onOpenLogin();
-  };
-
   return (
     <header className="site-header" id="site-main-header">
       {/* Top Announcement Bar */}
@@ -116,58 +92,56 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Header Action Buttons */}
-          <div className="header-actions" ref={accountMenuRef}>
+          <div className="header-actions">
             <button
-              className="icon-btn"
+              className="icon-btn header-icon-only"
               id="header-wishlist-action-btn"
               onClick={onOpenWishlist}
               title="Danh sách yêu thích"
+              aria-label="Danh sách yêu thích"
             >
-              <span className="material-symbols-outlined">favorite</span>
-              <span>Yêu thích</span>
+              <span className="material-symbols-outlined">favorite_border</span>
               {wishlistCount > 0 && (
                 <span className="icon-btn-badge">{wishlistCount}</span>
               )}
             </button>
 
             <button
-              className="icon-btn cart-header-btn"
+              className="icon-btn header-icon-only cart-header-btn"
               id="header-cart-action-btn"
               onClick={() => onNavigate('cart')}
               title="Xem giỏ hàng"
+              aria-label="Xem giỏ hàng"
             >
-              <span className="material-symbols-outlined">shopping_bag</span>
-              <span>Giỏ Hàng</span>
+              <span className="material-symbols-outlined">shopping_cart</span>
               {cartCount > 0 && (
                 <span className="icon-btn-badge">{cartCount}</span>
               )}
-              {cartTotal > 0 && (
-                <span style={{ fontSize: '0.8rem', opacity: 0.9 }}>
-                  ({FORMAT_CURRENCY(cartTotal)})
-                </span>
-              )}
             </button>
 
-            <button
-              className="icon-btn account-header-btn"
-              id="header-account-action-btn"
-              onClick={handleAccountClick}
-              title={isLoggedIn ? 'Tài khoản của bạn' : 'Đăng nhập'}
-            >
-              <span className="material-symbols-outlined">{isLoggedIn ? 'account_circle' : 'person'}</span>
-              <span>{isLoggedIn ? userName : 'Đăng nhập'}</span>
-            </button>
-            {isLoggedIn && isAccountMenuOpen && (
-              <div className="account-menu" role="menu">
-                <div className="account-menu-name">
-                  <span className="material-symbols-outlined">account_circle</span>
-                  <span>{userName}</span>
-                </div>
-                <button className="account-logout-btn" onClick={() => { setIsAccountMenuOpen(false); onLogout(); }}>
+            {isLoggedIn ? (
+              <div className="header-user-pill" id="header-account-action-btn">
+                <span className="material-symbols-outlined">person</span>
+                <span className="header-user-name">{userName}</span>
+                <button
+                  className="header-logout-icon"
+                  onClick={onLogout}
+                  title="Đăng xuất"
+                  aria-label="Đăng xuất"
+                >
                   <span className="material-symbols-outlined">logout</span>
-                  Đăng xuất
                 </button>
               </div>
+            ) : (
+              <button
+                className="icon-btn account-header-btn"
+                id="header-account-action-btn"
+                onClick={onOpenLogin}
+                title="Đăng nhập"
+              >
+                <span className="material-symbols-outlined">person</span>
+                <span>Đăng nhập</span>
+              </button>
             )}
           </div>
         </div>
