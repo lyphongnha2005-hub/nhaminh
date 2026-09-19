@@ -359,7 +359,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
               onClick={() => setActiveTab('care')}
               id="tab-btn-care"
             >
-              Cẩm Nang Giữ Đèn Bền Trên 5 Năm
+              Cẩm Nang Giữ Sản Phẩm Bền Trên 5 Năm
             </button>
             <button
               className={`tab-nav-btn ${activeTab === 'reviews' ? 'active' : ''}`}

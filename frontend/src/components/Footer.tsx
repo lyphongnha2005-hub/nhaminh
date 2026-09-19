@@ -31,7 +31,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </h2>
             </div>
             <p>
-              Không gian sáng tạo hồi sinh các loại bìa carton phế liệu và giấy vụn văn phòng thành các tác phẩm nghệ thuật nội thất bền vững, ấm cúng và độc bản cho ngôi nhà Việt.
+              Nhà Mình là không gian sáng tạo tái sinh bìa các-tông và giấy bỏ đi thành những món đồ decor bền vững, mang vẻ đẹp mộc mạc, tinh tế của chất liệu thủ công truyền thống vào từng góc sống.
             </p>
             <div className="footer-eco-callout">
               <span className="material-symbols-outlined" style={{ fontSize: '1.5rem' }}>forest</span>
