@@ -29,7 +29,7 @@ export const PRODUCTS: Product[] = [
     name: 'Cá Koi',
     category: 'tranh-3d',
     roomSpace: 'Phòng khách',
-    price: 1850000,
+    price: 185000,
     rating: 5,
     reviewCount: 0,
     badge: 'Tác phẩm đầu tiên',
