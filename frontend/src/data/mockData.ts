@@ -51,7 +51,7 @@ export const PRODUCTS: Product[] = [
     ],
     images: ['/product-koi-3d.png'],
     sizes: [
-      { id: 'standard', label: 'Bản tiêu chuẩn theo mẫu', dimensions: 'Kích thước theo tác phẩm mẫu', price: 1850000 },
+      { id: 'standard', label: 'Bản tiêu chuẩn theo mẫu', dimensions: 'Kích thước theo tác phẩm mẫu', price: 185000 },
     ],
     waxTones: [
       { id: 'ocean-blue', label: 'Xanh đại dương', hex: '#123d8f' },

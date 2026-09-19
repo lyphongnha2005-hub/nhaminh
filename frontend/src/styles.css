@@ -1205,10 +1205,12 @@ ul, ol {
 }
 
 .detail-price-main {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: var(--color-primary);
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .detail-price-original {
@@ -1993,7 +1995,10 @@ ul, ol {
 
 .summary-total-price {
   color: var(--color-primary);
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 /* Eco order metric */
