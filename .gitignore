@@ -4,6 +4,8 @@ dist/
 coverage/
 .DS_Store
 *.log
+*.pid
 .env*
 !.env.example
 backend/target/
+backend/uploads/

@@ -21,6 +21,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
@@ -30,7 +31,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setError('');
 
     if (mode === 'register') {
-      registerAccount({ fullName, email, password });
+      if (!phone.trim()) { setError('Vui lòng nhập số điện thoại.'); return; }
+      registerAccount({ fullName, email, phone: phone.trim(), password });
       setPassword('');
       setError('');
       onRegisterSuccess();
@@ -78,6 +80,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             Email
             <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
           </label>
+          {mode === 'register' && (
+            <label>Số điện thoại (bắt buộc)<input type="tel" autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} required maxLength={20} /></label>
+          )}
           <label>
             Mật khẩu
             <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={6} required />

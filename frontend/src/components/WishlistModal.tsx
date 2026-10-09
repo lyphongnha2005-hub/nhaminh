@@ -1,6 +1,6 @@
 import React from 'react';
-import { Product } from '../types';
-import { FORMAT_CURRENCY } from '../data/mockData';
+import { Product } from '../utils/types';
+import { FORMAT_CURRENCY } from '../utils/mockData';
 
 interface WishlistModalProps {
   isOpen: boolean;

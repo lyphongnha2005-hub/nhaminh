@@ -1,33 +1,43 @@
-import React, { useState } from 'react';
-import { ScreenType, Product, CartItem } from './types';
-import { PRODUCTS, INITIAL_CART_ITEMS } from './data/mockData';
+import React, { useEffect, useState } from 'react';
+import { ScreenType, Product, CartItem } from './utils/types';
+import { fetchActiveProducts } from './services/productService';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { ProductCatalog } from './components/ProductCatalog';
-import { ProductDetail } from './components/ProductDetail';
-import { CartPage } from './components/CartPage';
-import { CheckoutPage } from './components/CheckoutPage';
-import { DIYGuidesPage } from './components/DIYGuidesPage';
+import { ProductCatalog } from './pages/ProductCatalog';
+import { ProductDetail } from './pages/ProductDetail';
+import { CartPage } from './pages/CartPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { DIYGuidesPage } from './pages/DIYGuidesPage';
 import { WishlistModal } from './components/WishlistModal';
 import { WorkshopModal } from './components/WorkshopModal';
-import { LoginPage } from './components/LoginPage';
-import { RegisterPage } from './components/RegisterPage';
-import { MessagePage } from './components/MessagePage';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { MessagePage } from './pages/MessagePage';
 import { Toast, ToastMessage } from './components/Toast';
-import { getStoredAccount, isLoggedIn, logoutAccount } from './services/authService';
+import { getStoredAccount, isLoggedIn, logoutAccount, Role } from './services/authService';
+import { useShoppingLists } from './hooks/useShoppingLists';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<ScreenType>('catalog');
-  const [selectedProduct, setSelectedProduct] = useState<Product>(PRODUCTS[0]);
-  const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART_ITEMS);
-  const [wishlistIds, setWishlistIds] = useState<string[]>([]);
+  const screenFromPath=():ScreenType=>location.pathname==='/login'?'login':location.pathname==='/register'?'register':'catalog';
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>(screenFromPath);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [productError, setProductError] = useState('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [isWishlistOpen, setIsWishlistOpen] = useState<boolean>(false);
   const [isWorkshopOpen, setIsWorkshopOpen] = useState<boolean>(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(() => isLoggedIn());
   const [userName, setUserName] = useState<string | undefined>(() => getStoredAccount()?.fullName);
+  const [userRole, setUserRole] = useState<Role | undefined>(() => getStoredAccount()?.role);
   const [pendingWishlistProduct, setPendingWishlistProduct] = useState<Product | null>(null);
+  const [pendingCartItem, setPendingCartItem] = useState<Omit<CartItem, 'cartItemId'> | null>(null);
+
+  useEffect(() => {
+    fetchActiveProducts()
+      .then((items) => { setProducts(items); setSelectedProduct((current) => current ?? items[0] ?? null); })
+      .catch((error) => setProductError(error instanceof Error ? error.message : 'Không thể tải sản phẩm'));
+  }, []);
 
   // Helper to trigger toast
   const addToast = (text: string, type: 'default' | 'success' = 'default') => {
@@ -46,11 +56,17 @@ export default function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  const shopping = useShoppingLists(message => addToast(message));
+  const { cartItems, wishlistIds } = shopping;
+
   // Screen navigation with scroll to top
   const handleNavigate = (screen: ScreenType) => {
     setCurrentScreen(screen);
+    const path=screen==='login'?'/login':screen==='register'?'/register':'/';
+    if(location.pathname!==path) history.pushState({},'',path);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+  useEffect(()=>{const onPop=()=>setCurrentScreen(screenFromPath());addEventListener('popstate',onPop);return()=>removeEventListener('popstate',onPop)},[]);
 
   // Select a product to view detail
   const handleSelectProduct = (product: Product) => {
@@ -60,18 +76,8 @@ export default function App() {
   };
 
   // Add to cart from Catalog (default options)
-  const handleAddToCartQuick = (product: Product) => {
-    const existingIndex = cartItems.findIndex(
-      (item) => item.productId === product.id && item.size.includes(product.sizes[0]?.label || '')
-    );
-
-    if (existingIndex > -1) {
-      const updated = [...cartItems];
-      updated[existingIndex].quantity += 1;
-      setCartItems(updated);
-    } else {
-      const newItem: CartItem = {
-        cartItemId: `cart-${Date.now()}`,
+  const handleAddToCartQuick = async (product: Product) => {
+      const itemData: Omit<CartItem, 'cartItemId'> = {
         productId: product.id,
         name: product.name,
         image: product.images[0],
@@ -82,38 +88,48 @@ export default function App() {
         quantity: 1,
         recycledWasteAmount: product.specs.recycledWasteAmount,
       };
-      setCartItems([...cartItems, newItem]);
+    if (!isLoggedIn()) {
+      setPendingCartItem(itemData);
+      addToast('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.');
+      handleNavigate('login');
+      return;
     }
-
-    addToast(`Đã thêm "${product.name}" vào giỏ hàng!`, 'success');
+    const newItem: CartItem = { ...itemData, cartItemId: crypto.randomUUID() };
+    const saved = await shopping.update('cart', items => {
+      const match = items.find(item => item.productId === newItem.productId && item.size === newItem.size && item.waxTone === newItem.waxTone && item.fitting === newItem.fitting);
+      return match ? items.map(item => item.cartItemId === match.cartItemId ? { ...item, quantity: item.quantity + 1 } : item) : [...items, newItem];
+    });
+    if (saved) addToast(`Đã thêm "${product.name}" vào giỏ hàng!`, 'success');
   };
 
   // Add to cart with custom options from Detail
-  const handleAddToCartWithOptions = (itemData: Omit<CartItem, 'cartItemId'>) => {
+  const handleAddToCartWithOptions = async (itemData: Omit<CartItem, 'cartItemId'>) => {
+    if (!isLoggedIn()) {
+      setPendingCartItem(itemData);
+      addToast('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.');
+      handleNavigate('login');
+      return false;
+    }
     const newItem: CartItem = {
       ...itemData,
       cartItemId: `cart-${Date.now()}-${Math.random()}`,
     };
-    setCartItems((prev) => [...prev, newItem]);
-    addToast(`Đã thêm "${itemData.name}" (${itemData.size}) vào giỏ!`, 'success');
+    const saved = await shopping.update('cart', items => [...items, newItem]);
+    if (saved) addToast(`Đã thêm "${itemData.name}" (${itemData.size}) vào giỏ!`, 'success');
+    return saved;
   };
 
   // Buy now: add and jump directly to Cart
-  const handleBuyNow = (itemData: Omit<CartItem, 'cartItemId'>) => {
-    handleAddToCartWithOptions(itemData);
+  const handleBuyNow = async (itemData: Omit<CartItem, 'cartItemId'>) => {
+    if (!await handleAddToCartWithOptions(itemData)) return;
     setCurrentScreen('cart');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Wishlist toggle
-  const handleToggleWishlist = (product: Product) => {
-    if (wishlistIds.includes(product.id)) {
-      setWishlistIds((prev) => prev.filter((id) => id !== product.id));
-      addToast(`Đã bỏ "${product.name}" khỏi danh sách yêu thích.`);
-    } else {
-      setWishlistIds((prev) => [...prev, product.id]);
-      addToast(`Đã lưu "${product.name}" vào mục yêu thích!`, 'success');
-    }
+  const handleToggleWishlist = async (product: Product) => {
+    const saved = await shopping.update('wishlist', ids => ids.includes(product.id) ? ids.filter(id => id !== product.id) : [...ids, product.id]);
+    if (saved) addToast('Đã cập nhật danh sách yêu thích.', 'success');
   };
 
   const requireLoginForWishlist = (product?: Product) => {
@@ -124,13 +140,13 @@ export default function App() {
     }
 
     if (product) setPendingWishlistProduct(product);
-    setCurrentScreen('login');
+    handleNavigate('login');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenLogin = () => {
     if (isUserLoggedIn) return;
-    setCurrentScreen('login');
+    handleNavigate('login');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -138,28 +154,40 @@ export default function App() {
     logoutAccount();
     setIsUserLoggedIn(false);
     setUserName(undefined);
-    setWishlistIds([]);
+    setUserRole(undefined);
+    shopping.clear();
+    setIsWishlistOpen(false);
+    setPendingWishlistProduct(null);
+    setPendingCartItem(null);
+    handleNavigate('catalog');
     addToast('Bạn đã đăng xuất.', 'success');
   };
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = async () => {
     setIsUserLoggedIn(true);
     setUserName(getStoredAccount()?.fullName);
-    setCurrentScreen('catalog');
+    setUserRole(getStoredAccount()?.role);
+    handleNavigate('catalog');
+    await shopping.load();
+    if (pendingCartItem) {
+      const pending = pendingCartItem;
+      setPendingCartItem(null);
+      await handleAddToCartWithOptions(pending);
+    }
     if (pendingWishlistProduct) {
-      handleToggleWishlist(pendingWishlistProduct);
+      await handleToggleWishlist(pendingWishlistProduct);
       setPendingWishlistProduct(null);
     }
     addToast('Đăng nhập thành công!', 'success');
   };
 
   const handleRegisterSuccess = () => {
-    setCurrentScreen('login');
+    handleNavigate('login');
     addToast('Đăng ký thành công. Vui lòng đăng nhập để tiếp tục.', 'success');
   };
 
-  const handleOrderSuccess = () => {
-    setCartItems([]);
+  const handleOrderSuccess = async () => {
+    await shopping.update('cart', () => []);
     handleNavigate('catalog');
     addToast('Đặt hàng thành công! Xưởng sẽ liên hệ với bạn sớm.', 'success');
   };
@@ -170,23 +198,49 @@ export default function App() {
       handleRemoveCartItem(cartItemId);
       return;
     }
-    setCartItems((prev) =>
+    void shopping.update('cart', (prev) =>
       prev.map((item) => (item.cartItemId === cartItemId ? { ...item, quantity: newQty } : item))
     );
   };
 
-  const handleRemoveCartItem = (cartItemId: string) => {
+  const handleRemoveCartItem = async (cartItemId: string) => {
     const item = cartItems.find((i) => i.cartItemId === cartItemId);
-    setCartItems((prev) => prev.filter((i) => i.cartItemId !== cartItemId));
-    if (item) {
+    const saved = await shopping.update('cart', (prev) => prev.filter((i) => i.cartItemId !== cartItemId));
+    if (saved && item) {
       addToast(`Đã xóa "${item.name}" khỏi giỏ hàng.`);
     }
   };
 
-  const handleClearCart = () => {
-    setCartItems([]);
-    addToast('Đã làm rỗng giỏ hàng.');
+  const handleClearCart = async () => {
+    if (await shopping.update('cart', () => [])) addToast('Đã làm rỗng giỏ hàng.');
   };
+
+  useEffect(() => {
+    const synchronize = () => {
+      const account = getStoredAccount();
+      shopping.clear();
+      setIsWishlistOpen(false);
+      setPendingWishlistProduct(null);
+      setPendingCartItem(null);
+      setIsUserLoggedIn(!!account);
+      setUserName(account?.fullName);
+      setUserRole(account?.role);
+      if (account) void shopping.load();
+      else handleNavigate('catalog');
+    };
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === 'nhaminh-auth-session' || event.key === null) synchronize();
+    };
+    const onExpired = (event: Event) => {
+      if ((event as CustomEvent).detail?.scope === 'store') synchronize();
+    };
+    const timer = window.setInterval(() => {
+      if (isUserLoggedIn && !isLoggedIn()) synchronize();
+    }, 1000);
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('nhaminh-auth-expired', onExpired);
+    return () => { clearInterval(timer); window.removeEventListener('storage', onStorage); window.removeEventListener('nhaminh-auth-expired', onExpired); };
+  }, [isUserLoggedIn, shopping.clear, shopping.load]);
 
   // Download PDF template simulation
   const handleDownloadTemplate = (fileName: string) => {
@@ -203,7 +257,7 @@ export default function App() {
   // Derived counts
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalCartPrice = cartItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const wishlistProducts = PRODUCTS.filter((p) => wishlistIds.includes(p.id));
+  const wishlistProducts = products.filter((p) => wishlistIds.includes(p.id));
 
   if (currentScreen === 'login') {
     return (
@@ -235,6 +289,7 @@ export default function App() {
         onOpenWishlist={() => requireLoginForWishlist()}
         isLoggedIn={isUserLoggedIn}
         userName={userName}
+        userRole={userRole}
         onOpenLogin={handleOpenLogin}
         onLogout={handleLogout}
         searchQuery={searchQuery}
@@ -243,9 +298,10 @@ export default function App() {
 
       {/* Main Screen Content */}
       <div className="main-content-viewport" id="main-content-viewport">
+        {productError && <div className="container auth-error" style={{marginTop:'1rem'}}>{productError}. Hãy kiểm tra backend đang chạy.</div>}
         {currentScreen === 'catalog' && (
           <ProductCatalog
-            products={PRODUCTS}
+            products={products}
             onSelectProduct={handleSelectProduct}
             onAddToCart={handleAddToCartQuick}
             onToggleWishlist={requireLoginForWishlist}
@@ -254,7 +310,7 @@ export default function App() {
           />
         )}
 
-        {currentScreen === 'detail' && (
+        {currentScreen === 'detail' && selectedProduct && (
           <ProductDetail
             product={selectedProduct}
             onAddToCartWithOptions={handleAddToCartWithOptions}
@@ -263,7 +319,7 @@ export default function App() {
             isWishlisted={wishlistIds.includes(selectedProduct.id)}
             onNavigate={handleNavigate}
             onSelectRelatedProduct={handleSelectProduct}
-            allProducts={PRODUCTS}
+            allProducts={products}
           />
         )}
 

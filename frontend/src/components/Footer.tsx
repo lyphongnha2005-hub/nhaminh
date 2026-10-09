@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScreenType } from '../types';
+import { ScreenType } from '../utils/types';
 
 interface FooterProps {
   onNavigate: (screen: ScreenType) => void;
@@ -12,24 +12,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         <div className="footer-grid">
           {/* Brand Col */}
           <div className="footer-brand">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                background: '#2c221b',
-                border: '1px solid #b89063',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#ebd8c0'
-              }}>
-                <span className="material-symbols-outlined">recycling</span>
-              </div>
-              <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#fff', fontFamily: 'var(--font-serif)' }}>
-                Nhà Mình
-              </h2>
-            </div>
+            <button type="button" className="footer-logo" onClick={() => onNavigate('catalog')} aria-label="Nhà Mình — Trang chủ">
+              <img src="/logo-nha-minh.png" alt="Nhà Mình" width="64" height="64" loading="lazy" />
+            </button>
             <p>
               Nhà Mình là không gian sáng tạo tái sinh bìa các-tông và giấy bỏ đi thành những món đồ decor bền vững, mang vẻ đẹp mộc mạc, tinh tế của chất liệu thủ công truyền thống vào từng góc sống.
             </p>
@@ -69,17 +54,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="footer-col">
             <h4>Cơ sở</h4>
             <div className="footer-links" style={{ color: '#9c9288', fontSize: '0.85rem', lineHeight: '1.6' }}>
-              <div><strong>Xưởng & Trưng Bày:</strong> 600 Nguyễn Văn Cừ, thành phố Cần Thơ</div>
+              <div><strong>Địa chỉ:</strong> 600 Nguyễn Văn Cừ, thành phố Cần Thơ</div>
               <div><strong>Giờ Mở Cửa:</strong> 08:30 - 18:30 (Thứ 2 - Chủ Nhật)</div>
-              <div><strong>Hotline / Zalo:</strong> 08 3769 4079</div>
-              <div><strong>Email:</strong></div>
+              <div><strong>Hotline / Zalo:</strong> 079 823 9141</div>
+              <div><strong>Email:</strong> nhaminhxincamon@gmail.com</div>
               <div><strong>Fanpage:</strong> Nhà Mình</div>
             </div>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <div>© 2025 Nhà Mình Atelier - Đồ Decor Tái Chế & Cẩm Nang Tự Làm. Tôn vinh vẻ đẹp bền vững.</div>
+          <div>© 2025 Nhà Mình - Đồ Decor Tái Chế & Cẩm Nang Tự Làm. Tôn vinh vẻ đẹp bền vững.</div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             <span>Chính Sách Bảo Hành 12 Tháng</span>
             <span>Giao Hàng Giảm Nhựa</span>
