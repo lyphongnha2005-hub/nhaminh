@@ -64,7 +64,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         </div>
 
         <div className="footer-bottom">
-          <div>© 2025 Nhà Mình - Đồ Decor Tái Chế & Cẩm Nang Tự Làm. Tôn vinh vẻ đẹp bền vững.</div>
+          <div>© 2026 Nhà Mình - Đồ Decor Tái Chế & Cẩm Nang Tự Làm. Tôn vinh vẻ đẹp bền vững.</div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             <span>Chính Sách Bảo Hành 12 Tháng</span>
             <span>Giao Hàng Giảm Nhựa</span>
