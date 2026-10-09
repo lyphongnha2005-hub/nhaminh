@@ -1,10 +1,11 @@
 import {Product} from '../utils/types';
+import {apiUrl} from './authService';
 
 interface ApiVariant {id:number;type:'SIZE'|'COLOR'|'FITTING';code:string;name:string;dimensions?:string;colorHex?:string;priceAdjustment:number;stockQuantity:number}
 interface ApiProduct {id:number;name:string;categoryName:string;shortDescription:string;roomSpace?:string;basePrice:number;stockQuantity:number;recycledWasteAmount?:string;imageUrls:string[];variants:ApiVariant[]}
 
 export async function fetchActiveProducts():Promise<Product[]>{
-  const response=await fetch('/api/products');
+  const response=await fetch(apiUrl('/api/products'));
   if(!response.ok)throw new Error('Không thể tải danh sách sản phẩm');
   const data=await response.json() as ApiProduct[];
   return data.map(mapProduct);
