@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.group04.services.AuthService;
 import com.group04.utils.ApiException;
 import com.group04.models.AccountPrincipal;
 import com.group04.models.Customer;

@@ -32,12 +32,14 @@ class ProductImageRemovalTest {
                 BigDecimal.TEN, 1, "ACTIVE", "1kg", List.of(), List.of(), removed);
     }
 
-    @Test void removesSelectedImageAndPromotesRemainingImage() {
+    @Test
+    void removesSelectedImageAndPromotesRemainingImage() {
         Product product = setup();
         ProductImage first = new ProductImage(product, "/first.png", "", 0, true);
         ProductImage second = spy(new ProductImage(product, "/second.png", "", 1, false));
         when(images.findAllByProductIdOrderByDisplayOrderAsc(7L))
-                .thenReturn(List.of(first, second), List.of(second));
+                .thenReturn(List.of(first, second))
+                .thenReturn(List.of(second));
         var result = service.update(7L, request(List.of("/first.png")));
         verify(images).deleteAll(List.of(first));
         verify(images).saveAll(List.of(second));
@@ -50,18 +52,21 @@ class ProductImageRemovalTest {
         assertEquals("/second.png", result.imageUrl());
     }
 
-    @Test void canRemoveAllImages() {
+    @Test
+    void canRemoveAllImages() {
         Product product = setup();
         ProductImage first = new ProductImage(product, "/first.png", "", 0, true);
         when(images.findAllByProductIdOrderByDisplayOrderAsc(7L))
-                .thenReturn(List.of(first), List.of());
+                .thenReturn(List.of(first))
+                .thenReturn(List.of());
         var result = service.update(7L, request(List.of("/first.png")));
         verify(images).deleteAll(List.of(first));
         assertNull(result.imageUrl());
         assertTrue(result.imageUrls().isEmpty());
     }
 
-    @Test void cannotRemoveAnotherProductsImage() {
+    @Test
+    void cannotRemoveAnotherProductsImage() {
         Product product = setup();
         ProductImage first = new ProductImage(product, "/first.png", "", 0, true);
         when(images.findAllByProductIdOrderByDisplayOrderAsc(7L)).thenReturn(List.of(first));
@@ -70,7 +75,8 @@ class ProductImageRemovalTest {
         verify(images).saveAll(List.of(first));
     }
 
-    @Test void omittedRemovalListPreservesImages() {
+    @Test
+    void omittedRemovalListPreservesImages() {
         setup();
         service.update(7L, request(null));
         verify(images, never()).deleteAll(anyList());
