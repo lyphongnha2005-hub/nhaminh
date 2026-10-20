@@ -49,7 +49,7 @@ Xem giá tại Render trước khi bấm tạo; cấu hình trong repo không t�
 
 1. Đăng nhập Render, chọn New → Blueprint, kết nối repository `lyphongnha2005-hub/nhaminh`, branch `main`.
 2. Xem cấu hình trong `render.yaml`, nhập `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` cho database cloud.
-3. Render tạo `JWT_SECRET` ngẫu nhiên. `CORS_ALLOWED_ORIGINS` đã là `https://nhaminh-flame.vercel.app`.
+3. Render tạo `JWT_SECRET` ngẫu nhiên. `CORS_ALLOWED_ORIGINS` trong Blueprint đã cho phép domain Vercel, `https://nhaminh.id.vn` và `https://www.nhaminh.id.vn`.
 4. Nếu đã chuyển admin từ database cũ, bỏ trống cả ba biến `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_FULL_NAME`.
    Nếu tạo admin mới, nhập đủ cả ba; mật khẩu tối thiểu 8 ký tự. Không nhập thông tin này vào frontend.
 5. Sau khi deploy, lấy URL HTTPS thực tế của backend. Mở `/api/health` phải có `status: ok`.
@@ -85,6 +85,27 @@ SPA rewrite cho phép tải trực tiếp `/login/admin` và `/admin/dashboard`.
 Ảnh `/uploads/...` được lấy từ backend; logo và ảnh đi kèm frontend vẫn lấy từ Vercel.
 
 ## 4. Push các thay đổi lần sau
+
+### Tên miền riêng đăng ký tại P.A Việt Nam
+
+1. Trong Vercel, mở đúng project đang phục vụ `nhaminh-flame.vercel.app` → Settings → Domains.
+2. Thêm `nhaminh.id.vn` và `www.nhaminh.id.vn`. Chọn chuyển hướng `www` về `nhaminh.id.vn` nếu muốn dùng địa chỉ không có `www` làm địa chỉ chính.
+3. Ghi lại chính xác bản ghi DNS mà Vercel hiển thị cho từng domain. Giá trị có thể riêng theo project.
+4. Tại P.A Việt Nam, mở tên miền `nhaminh.id.vn`, vào phần quản lý DNS. Nếu nameserver hiện nằm ở nhà cung cấp khác, sửa bản ghi tại nhà cung cấp DNS đó.
+5. Sửa bản ghi A của `@` theo IP Vercel yêu cầu; thêm hoặc sửa CNAME `www` theo đích Vercel yêu cầu.
+   Nhập giá trị DNS thuần, không nhập `https://` hoặc đường dẫn. Không giữ bản ghi A/AAAA/CNAME xung đột cho cùng hostname.
+6. Giữ nguyên các bản ghi email MX/TXT. Nếu Vercel yêu cầu TXT xác minh quyền sở hữu, thêm đúng tên và giá trị được hiển thị.
+7. Chờ Vercel báo `Valid Configuration` và cấp HTTPS, rồi mở `https://nhaminh.id.vn`.
+8. Với backend đã chạy, sửa biến môi trường `CORS_ALLOWED_ORIGINS` trên dịch vụ để có cả hai domain mới rồi redeploy.
+   Biến môi trường đã đặt trên host ghi đè giá trị mặc định trong source; sửa code không tự thay đổi biến đã đặt thủ công.
+
+Tên miền chính: `https://nhaminh.id.vn/`; admin: `https://nhaminh.id.vn/login/admin`.
+Tên miền không thay thế backend hoặc database cloud. `VITE_API_URL` vẫn phải trỏ tới API backend thực tế.
+Không đặt `VITE_API_URL=https://nhaminh.id.vn` khi domain này chỉ phục vụ frontend.
+
+Hướng dẫn chính thức: https://vercel.com/docs/domains/working-with-domains/add-a-domain
+
+### Lệnh Git
 
 Chạy tại thư mục repository:
 

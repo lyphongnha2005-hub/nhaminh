@@ -55,7 +55,7 @@ $env:JWT_SECRET='chuoi-bi-mat-ngau-nhien-it-nhat-32-byte'
 $env:ADMIN_EMAIL='admin@example.com'
 $env:ADMIN_PASSWORD='MatKhau@Manh123'
 $env:ADMIN_FULL_NAME='Quản trị Nhà Mình'
-$env:CORS_ALLOWED_ORIGINS='http://localhost:3000,https://nhaminh-flame.vercel.app'
+$env:CORS_ALLOWED_ORIGINS='http://localhost:3000,https://nhaminh-flame.vercel.app,https://nhaminh.id.vn,https://www.nhaminh.id.vn'
 cd backend
 mvn spring-boot:run
 ```
