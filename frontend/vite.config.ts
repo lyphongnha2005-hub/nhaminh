@@ -1,7 +1,17 @@
 import react from '@vitejs/plugin-react';
-import {defineConfig} from 'vite';
+import {defineConfig, loadEnv} from 'vite';
 
-export default defineConfig(() => {
+export default defineConfig(({mode}) => {
+  if (process.env.VERCEL === '1') {
+    const apiOrigin = (process.env.VITE_API_URL || loadEnv(mode, process.cwd()).VITE_API_URL || '').trim();
+    let valid = false;
+    try {
+      const url = new URL(apiOrigin);
+      valid = url.protocol === 'https:' && url.pathname === '/' && !url.search && !url.hash
+        && !url.username && !url.password && !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+    } catch { /* Show one actionable configuration error below. */ }
+    if (!valid) throw new Error('Set VITE_API_URL in Vercel to the public HTTPS backend origin (without /api), then redeploy.');
+  }
   return {
     plugins: [react()],
     resolve: {

@@ -1,5 +1,7 @@
 # Nha Minh
 
+Hướng dẫn triển khai GitHub + Vercel + backend online, chuyển SQL Server và giữ ảnh sản phẩm: [DEPLOY.md](DEPLOY.md).
+
 Dự án được tách thành hai phần độc lập:
 
 - `frontend/`: giao diện React + Vite, giữ nguyên các màn hình và component hiện có.

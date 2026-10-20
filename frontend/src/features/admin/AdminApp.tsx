@@ -10,6 +10,7 @@ import {
 import {
   ApiError,
   apiRequest,
+  assetUrl,
   getSession,
   loginAccount,
   logoutAccount,
@@ -718,7 +719,7 @@ function ProductTable({
                     <div className="product-cell">
                       <div className={`product-thumb thumb-${i % 6}`}>
                         {p.imageUrl ? (
-                          <img src={p.imageUrl} alt={p.name} />
+                          <img src={assetUrl(p.imageUrl)} alt={p.name} />
                         ) : (
                           <Icon>{i % 2 ? "shelves" : "light"}</Icon>
                         )}
@@ -830,7 +831,7 @@ function ProductViewModal({
                 ? [product.imageUrl]
                 : []
             ).map((url, index) => (
-              <img key={url} src={url} alt={`${product.name} ${index + 1}`} />
+              <img key={url} src={assetUrl(url)} alt={`${product.name} ${index + 1}`} />
             ))}
             {!product.imageUrl && !product.imageUrls?.length && (
               <div className="product-view-no-image">
@@ -1160,7 +1161,7 @@ function ProductModal({
                 <div className="image-previews">
                   {existingImages.map((url, index) => (
                     <div key={url}>
-                      <img src={url} alt={`${form.name} ${index + 1}`} />
+                      <img src={assetUrl(url)} alt={`${form.name} ${index + 1}`} />
                       <button
                         type="button"
                         title="Xóa ảnh hiện tại"

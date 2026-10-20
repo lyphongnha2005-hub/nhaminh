@@ -1,5 +1,5 @@
 import {Product} from '../utils/types';
-import {apiUrl} from './authService';
+import {apiUrl, assetUrl} from './authService';
 
 interface ApiVariant {id:number;type:'SIZE'|'COLOR'|'FITTING';code:string;name:string;dimensions?:string;colorHex?:string;priceAdjustment:number;stockQuantity:number}
 interface ApiProduct {id:number;name:string;categoryName:string;shortDescription:string;roomSpace?:string;basePrice:number;stockQuantity:number;recycledWasteAmount?:string;imageUrls:string[];variants:ApiVariant[]}
@@ -12,6 +12,7 @@ export async function fetchActiveProducts():Promise<Product[]>{
 }
 
 function mapProduct(p:ApiProduct):Product{
+  p = {...p, imageUrls: p.imageUrls?.map(assetUrl)};
   const sizes=p.variants.filter(v=>v.type==='SIZE').map(v=>({id:String(v.id),label:v.name,dimensions:v.dimensions||v.name,price:Number(p.basePrice)+Number(v.priceAdjustment)}));
   const colors=p.variants.filter(v=>v.type==='COLOR').map(v=>({id:String(v.id),label:v.name,hex:v.colorHex||'#8a572c'}));
   const fittings=p.variants.filter(v=>v.type==='FITTING').map(v=>({id:String(v.id),label:v.name,priceDelta:Number(v.priceAdjustment)}));

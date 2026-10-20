@@ -1,0 +1,35 @@
+# Creates a PAID service and persistent disk. Review the price before applying.
+services:
+  - type: web
+    name: nhaminh-backend
+    runtime: docker
+    plan: starter
+    region: singapore
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    disk:
+      name: product-uploads
+      mountPath: /app/uploads
+      sizeGB: 1
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: UPLOAD_DIR
+        value: /app/uploads
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://nhaminh-flame.vercel.app
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_FULL_NAME
+        sync: false

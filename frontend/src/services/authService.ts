@@ -4,8 +4,10 @@ export interface AuthSession { accessToken: string; tokenType: string; expiresAt
 type AuthScope = 'store' | 'admin';
 const STORE_KEY = 'nhaminh-auth-session';
 const ADMIN_KEY = 'nhaminh-admin-auth-session';
-const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
 export const apiUrl = (path: string) => `${API_BASE_URL}${path}`;
+// Uploaded images live on the API host; bundled images stay on the frontend.
+export const assetUrl = (path: string) => path.startsWith('/uploads/') ? apiUrl(path) : path;
 export class ApiError extends Error { constructor(public status: number, message: string) { super(message) } }
 const key = (scope: AuthScope) => scope === 'admin' ? ADMIN_KEY : STORE_KEY;
 const read = (scope: AuthScope = 'store'): AuthSession | null => {

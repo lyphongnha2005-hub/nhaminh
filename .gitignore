@@ -9,3 +9,8 @@ coverage/
 !.env.example
 backend/target/
 backend/uploads/
+.vercel/
+# Database exports contain real accounts and orders; never commit them.
+*.bak
+*.bacpac
+*.dacpac

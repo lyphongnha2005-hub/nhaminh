@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,11 +19,13 @@ public class ProductImageService {
     private static final long MAX = 5 * 1024 * 1024;
     private final ProductRepository products;
     private final ProductImageRepository images;
-    private final Path root = Path.of("uploads", "products").toAbsolutePath().normalize();
+    private final Path root;
 
-    public ProductImageService(ProductRepository p, ProductImageRepository i) {
+    public ProductImageService(ProductRepository p, ProductImageRepository i,
+            @Value("${app.upload-dir:uploads}") String uploadDir) {
         products = p;
         images = i;
+        root = Path.of(uploadDir, "products").toAbsolutePath().normalize();
     }
 
     @Transactional
